@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: leaderz
+spec:
+  selector:
+    matchLabels:
+      app: leaderz
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        app: leaderz
+    spec:
+      automountServiceAccountToken: true
+      serviceAccount: leaderz
+      serviceAccountName: leaderz
+      containers:
+        - name: leaderz
+          image: caarlos0/leaderz
+          args:
+            - -node-id=$(POD_NAME)
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
